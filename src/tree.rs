@@ -25,9 +25,10 @@ pub fn get_tree(layers: &mut Vec<usize>, connector: &str) -> Option<String> {
     let mut s = String::new();
     if let [.., last] = layers.as_slice() {
         for i in 0..*last {
-            match layers.binary_search(&i) {
-                Ok(_) => s.push_str(VERTICAL_CONNECTOR),
-                Err(_) => s.push_str(EMPTY_CONNECTOR),
+            if layers.contains(&i) {
+                s.push_str(VERTICAL_CONNECTOR)
+            } else {
+                s.push_str(EMPTY_CONNECTOR)
             }
         }
     } else {

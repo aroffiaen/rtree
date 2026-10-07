@@ -1,14 +1,22 @@
-use std::path::PathBuf;
-use tester::{
-    command::{get_command, CommandSummary, CommandSummaryBuilder, CURRENT_DIRECTORY},
+pub mod command;
+pub mod fileonly;
+pub mod size;
+pub mod sorter;
+pub mod stats;
+pub mod tree;
+pub mod visitor;
+pub mod walking_directories;
+
+use crate::{
+    command::{get_command, CommandSummaryBuilder, CURRENT_DIRECTORY},
     sorter::Sortby,
 };
+use std::path::PathBuf;
 
 fn main() {
     let matches = get_command().get_matches();
 
-    let mut summary_builder = CommandSummaryBuilder::default();
-    summary_builder
+    let command = CommandSummaryBuilder::new()
         .dir(
             matches
                 .get_one::<PathBuf>("dir")
@@ -37,7 +45,8 @@ fn main() {
         .all(match matches.get_one("all") {
             Some(&a) => a,
             None => false,
-        });
+        })
+        .build();
 
-    CommandSummary::from(summary_builder).exec();
+    command.exec();
 }

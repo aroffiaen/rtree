@@ -6,7 +6,7 @@ use crate::{
     tree::{self, BRANCH_CONNECTOR, LEAF_CONNECTOR},
     walking_directories,
 };
-use std::{cell::RefCell, path::PathBuf, rc::Rc};
+use std::path::PathBuf;
 use walkdir::DirEntry;
 
 pub struct DirVisitor {
@@ -21,8 +21,8 @@ pub struct DirVisitor {
     depth_from_root: usize,
     max_walking_depth: usize,
     max_recursion_depth: usize,
-    stats: Rc<RefCell<FileStats>>,
-    result_string: Rc<RefCell<String>>,
+    stats: FileStats,
+    result_string: String,
 }
 
 impl Default for DirVisitor {
@@ -39,8 +39,8 @@ impl Default for DirVisitor {
             dir: PathBuf::new(),
             max_walking_depth: usize::MAX,
             max_recursion_depth: usize::MAX,
-            stats: Rc::new(RefCell::new(FileStats::default())),
-            result_string: Rc::new(RefCell::new(String::new())),
+            stats: FileStats::default(),
+            result_string: String::new(),
         }
     }
 }
@@ -71,7 +71,7 @@ impl From<CommandSummary> for DirVisitor {
 
 impl DirVisitor {
     pub fn get_result_string(self) -> String {
-        self.result_string.take()
+        self.result_string
     }
 
     pub fn get_dir(&self) -> PathBuf {
@@ -145,9 +145,8 @@ impl DirVisitor {
         };
         let path = entry.path().to_owned();
 
-        self.stats.borrow_mut().update(entry);
+        self.stats.update(entry);
         self.result_string
-            .borrow_mut()
             .push_str(&self.entry_to_string(entry, tree));
 
         if self.tree && entry.file_type().is_dir() && !self.reached_recursion_limit() {
@@ -165,10 +164,6 @@ impl DirVisitor {
             self.pop_depth();
             return;
         }
-
-        self.result_string
-            .borrow_mut()
-            .push_str(&format!("{:?}\n", self.layers));
 
         let (walk, walk_size) = walking_directories::get_dir_entries(self);
         if walk_size != 0 {

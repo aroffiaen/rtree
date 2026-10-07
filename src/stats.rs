@@ -9,15 +9,9 @@ pub fn stats_argument() -> Arg {
         .help("Get the statistics about files in the directory.")
 }
 
-#[derive(Clone)]
+#[derive(Clone, Default)]
 pub struct FileStats {
     file_count: usize,
-}
-
-impl Default for FileStats {
-    fn default() -> Self {
-        Self { file_count: 0 }
-    }
 }
 
 impl FileStats {

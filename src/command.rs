@@ -29,49 +29,58 @@ pub struct CommandSummaryBuilder {
 }
 
 impl CommandSummaryBuilder {
-    pub fn dir(&mut self, dir: PathBuf) -> &mut Self {
-        self.dir = dir;
-        self
+    pub fn new() -> Self {
+        Self::default()
     }
 
-    pub fn tree(&mut self, tree: bool) -> &mut Self {
-        self.tree = tree;
-        self
+    pub fn dir(self, dir: PathBuf) -> Self {
+        Self { dir, ..self }
     }
 
-    pub fn size(&mut self, size: bool) -> &mut Self {
-        self.size = size;
-        self
+    pub fn tree(self, tree: bool) -> Self {
+        Self { tree, ..self }
     }
 
-    pub fn max(&mut self, max: Option<usize>) -> &mut Self {
-        self.max = max;
-        self
+    pub fn size(self, size: bool) -> Self {
+        Self { size, ..self }
     }
 
-    pub fn sort(&mut self, sort: Option<Sortby>) -> &mut Self {
-        self.sort = sort;
-        self
+    pub fn max(self, max: Option<usize>) -> Self {
+        Self { max, ..self }
     }
 
-    pub fn file(&mut self, file: bool) -> &mut Self {
-        self.file = file;
-        self
+    pub fn sort(self, sort: Option<Sortby>) -> Self {
+        Self { sort, ..self }
     }
 
-    pub fn symlinks(&mut self, symlinks: bool) -> &mut Self {
-        self.symlinks = symlinks;
-        self
+    pub fn file(self, file: bool) -> Self {
+        Self { file, ..self }
     }
 
-    pub fn all(&mut self, all: bool) -> &mut Self {
-        self.all = all;
-        self
+    pub fn symlinks(self, symlinks: bool) -> Self {
+        Self { symlinks, ..self }
     }
 
-    pub fn stats(&mut self, stats: bool) -> &mut Self {
-        self.stats = stats;
-        self
+    pub fn all(self, all: bool) -> Self {
+        Self { all, ..self }
+    }
+
+    pub fn stats(self, stats: bool) -> Self {
+        Self { stats, ..self }
+    }
+
+    pub fn build(self) -> CommandSummary {
+        CommandSummary {
+            all: self.all,
+            tree: self.tree,
+            size: self.size,
+            file: self.file,
+            stats: self.stats,
+            dir: self.dir,
+            symlinks: self.symlinks,
+            max: self.max,
+            sort: self.sort,
+        }
     }
 }
 
@@ -135,25 +144,9 @@ impl Default for CommandSummaryBuilder {
     }
 }
 
-impl From<CommandSummaryBuilder> for CommandSummary {
-    fn from(value: CommandSummaryBuilder) -> Self {
-        Self {
-            all: value.all,
-            tree: value.tree,
-            size: value.size,
-            file: value.file,
-            stats: value.stats,
-            dir: value.dir,
-            symlinks: value.symlinks,
-            max: value.max,
-            sort: value.sort,
-        }
-    }
-}
-
 pub fn get_command() -> Command {
-    Command::new("rstree")
-        .version("1.0.0")
+    Command::new("rtree")
+        .version("0.1.0")
         .about("Display files and directories recursively.")
         .arg(
             Arg::new("dir")

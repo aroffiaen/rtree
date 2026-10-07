@@ -4,11 +4,11 @@ use walkdir::{DirEntry, WalkDir};
 
 pub fn get_walkdir<P: AsRef<Path>>(
     root: P,
-    simlinks: bool,
+    symlinks: bool,
     sortby: Option<Sortby>,
     depth: usize,
 ) -> WalkDir {
-    let walk = WalkDir::new(root).follow_links(simlinks).max_depth(depth);
+    let walk = WalkDir::new(root).follow_links(symlinks).max_depth(depth);
     match sortby {
         Some(Sortby::DirFirst) => walk.sort_by_key(|a| a.path().is_file()),
         Some(Sortby::DirLast) => walk.sort_by_key(|a| a.path().is_dir()),
